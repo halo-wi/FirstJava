@@ -1,0 +1,66 @@
+==========================================
+	Inline View 와 Top-N SubQuery
+==========================================
+
+1. 급여를 가장 많이 받는 상위 5명의 직원 정보를 조회하시오.
+-- rownum 먼저 나오는 5개 선택
+-- rownum 1부터 시작 범위에 1이 포함 되지 않으면 호출불가
+
+select rownum, aa.*
+from(
+    select first_name, salary
+    from employees
+    order by salary desc) aa
+where rownum <=5
+
+select*
+from(
+    select rownum rr, aa.*
+    from(
+        select first_name, salary
+        from employees
+        order by salary desc) aa
+    where rownum <=5
+    )
+where rr = 5
+
+
+2. 커미션을 가장 많이 받는 상위 3명의 직원 정보를 조회하시오.
+
+select * from (
+select commission_pct, first_name
+from employees
+order by commission_pct desc nulls last)
+where rownum <=3 
+
+
+
+-- 연습문제
+1. 월별 입사자 수를 조회하되, 입사자 수가 5명 이상인 월만 출력하시오.
+
+select to_char(hire_date, 'mm'), count(*)
+from employees
+having count(*) >=5
+group by to_char(hire_date, 'mm')
+order by 1
+
+select*
+from(
+    select to_char(hire_date, 'mm'), count(*)
+    from employees
+    group by to_char(hire_date, 'mm')
+    order by 2 desc)
+where rownum <= 12
+
+
+2. 년도별 입사자 수를 조회하시오. 
+단, 입사자수가 많은 년도부터 출력되도록 합니다.
+
+
+
+select*
+from (
+    select to_char(hire_date, 'yyyy'), count(*)
+    from employees
+    group by to_char(hire_date, 'yyyy')
+    order by 2 desc)
