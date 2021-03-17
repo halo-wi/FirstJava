@@ -1,0 +1,137 @@
+// CRUD( create:insert, read:select, update, delete )
+
+conn hr/hr
+
+drop table customer;  -- 기존 테이블 삭제
+
+create table customer(
+                      cust_id number,
+                      cust_name varchar2(20),
+                      gender char(1),
+                      gender2 varchar(10),
+                      birthday date,
+                      year01 interval year(3) to month,
+                      day01 interval day(3) to second
+);
+-- 새 테이블 생성
+
+--char 고정길이
+--varchar 가변길이
+
+
+insert into customer values(1, '홍길동', 'm','남', sysdate, interval '36' month(3), interval '100' day(3));
+insert into customer values(2, '홍길동2', 'f','남', sysdate, interval '36' month(3), interval '100' day(3));
+insert into customer values(3, '홍길동3', 'm','남', sysdate, interval '36' month(3), interval '100' day(3));
+insert into customer values(4, '홍길동4    ', 'm','남  ', sysdate, interval '36' month(3), interval '100' day(3));
+-- 생성된 테이블에 값 추가하기
+
+
+================================================================
+
+-- 기존테이블을 이용한 새 테이블 생성
+
+create table emp
+as
+select *from employees
+
+
+-- 특정 정보의 테이블 생성
+
+create table emp2
+as
+select *from employees
+where department_id = 80;
+
+
+-- 값은 저장하지 않고 칼럼만 저장
+
+create table emp3
+as
+select *from employees
+where 1=0;
+
+================================================================
+
+create table emp4
+as
+select employee_id, first_name, salary, hire_date
+from employees
+where 1=0;
+
+
+-- 칼럼 수정 
+
+alter table emp4
+modify (dept_id number(3), address varchar2(20));
+
+alter table emp4
+drop (deptid)
+
+alter table emp4
+add (dept_id number(3));
+
+==========================================================
+
+
+--구조와 데이터 모두 삭제 
+drop table customer
+
+
+--구조는 남기고 데이터 삭제
+truncate table emp4
+
+
+=================================================
+
+실습
+
+--P(primary key) 유일 값 , null 불가 하나의 체이블에 오직하나(필수값)
+--U(unique) 유일값 null가능
+--R(Foregin key) 참조키, 외래키, 일반적으로 다른 테이블의 pk를 참조 캍은테이블의 컬럼 참조
+--C(Check) 조건에 맞는 데이터만 가능
+
+drop table customer;
+--p/ not null/ u/ c/ r
+create table customer(
+cust_id number constraint custmer_cust_id_pk primary key,
+cust_name varchar2(30) not null,
+email varchar2(20) constraint custmer_email_unique unique,
+address varchar2(100),
+gender char(1) constraint custmer_gender_check  check (gender in ('M','F')), 
+dept_id number constraint custmer_dept_id_references references departments(department_id),
+loc varchar2(20) default 'seoul'
+)
+
+
+insert into customer (cust_id, cust_name, email,gender,dept_id,loc) values(5, '아아아','eye2ty3', 'M', 100,'deajoen');
+
+
+
+상품정보 -> 번호, 이름, 가격
+주문 -> 고객번호 주문일자 순서 상품번호 수량
+create table item_i(
+ino number constraint item_i_item_pk primary key,
+iname varchar2(100),
+iprice number(9)
+)
+
+create table ordr(
+cno number ,
+odate date,
+oror number,
+ino number constraint ordr_item_fk references item_i(ino),
+vol number,
+constraint ordr_pk primary key(cno,odate,oror)
+)
+
+insert into item_i values(1, 'note',100);
+insert into item_i values(2, 'coke',100);
+
+select * from customer;
+insert into ordr values(4, '2001/03/17', 1,2,10);
+insert into ordr values(4, '2001/03/17', 2,2,10);
+insert into ordr values(4, '2001/03/17', 3,2,10);
+
+select* from ordr;
+
+
