@@ -1,0 +1,56 @@
+class Solution {
+    public int solution(int[][] board, int[] moves) {
+       int answer = 0;
+		int count = 0;
+		int live = 0;
+		int n = 0;
+		int x = 0;
+		int a = 0;
+		int[] arr = new int[moves.length];
+		int[] arr2 = new int[moves.length];
+		for (int i = 0; i < moves.length; i++) {
+			x = moves[i];
+			for (int j = 0; j < board.length; j++) {
+				a = 0;
+				if (board[j][x - 1] != 0) {
+					a = board[j][x - 1];
+					board[j][x - 1] = 0;
+					break;
+				}
+			}
+			arr[i] = a;
+			if (a == 0) {
+				count++;
+			}
+		}
+		while (n <= (moves.length / 2)) {
+			int k = 0;
+			for (int i = 0; i < arr.length; i++) {
+
+				if (arr[i] == 0)
+					continue;
+				else if (arr[i] == k) {
+					for (int j = i - 1; j >= 0; j--) {
+						if (arr[j] == arr[i]) {
+							arr[j] = 0;
+							arr[i] = 0;
+							break;
+						}
+					}
+				} else
+					k = arr[i];
+
+			}
+			n++;
+			if (n == (moves.length / 2)) {
+				for (int l = 0; l < arr.length; l++) {
+					if (arr[l] != 0)
+						live++;
+				}
+			}
+		}
+		
+		answer = moves.length-live-count;
+		return answer;
+    }
+}
